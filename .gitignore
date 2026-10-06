@@ -6,6 +6,8 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 
+ekz/
+
 *.suo
 *.user
 *.sln.docstates

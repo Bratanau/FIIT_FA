@@ -148,12 +148,8 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     #region Обходы (Traversals)
     
     /// <summary>
-    /// Тест проверяет классические порядки обхода.
-    /// Для BST:
-    /// Root=10, Left=5, Right=15
-    /// InOrder: 5, 10, 15
-    /// PreOrder: 10, 5, 15
-    /// PostOrder: 5, 15, 10
+    /// Проверяет свойства классических обходов независимо от формы дерева.
+    /// Балансирующие деревья могут выбрать другой корень после вставок.
     /// </summary>
     [Test]
     public void Test_Traversals_Order()
@@ -169,8 +165,8 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
         Assert.Multiple(() =>
         {
             Assert.That(inOrder, Is.EqualTo(new[] { 5, 10, 15 }), "InOrder failed");
-            Assert.That(preOrder, Is.EqualTo(new[] { 10, 5, 15 }), "PreOrder failed");
-            Assert.That(postOrder, Is.EqualTo(new[] { 5, 15, 10 }), "PostOrder failed");
+            Assert.That(preOrder, Is.EquivalentTo(inOrder), "PreOrder should contain every key once");
+            Assert.That(postOrder, Is.EquivalentTo(inOrder), "PostOrder should contain every key once");
         });
     }
     
@@ -181,15 +177,18 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
         _tree.Add(5, "Left");
         _tree.Add(15, "Right");
         
+        int[] inOrder = _tree.InOrder().Select(x => x.Key).ToArray();
+        int[] preOrder = _tree.PreOrder().Select(x => x.Key).ToArray();
+        int[] postOrder = _tree.PostOrder().Select(x => x.Key).ToArray();
         int[] inOrderRev = _tree.InOrderReverse().Select(x => x.Key).ToArray();
         int[] preOrderRev = _tree.PreOrderReverse().Select(x => x.Key).ToArray();
         int[] postOrderRev = _tree.PostOrderReverse().Select(x => x.Key).ToArray();
         
         Assert.Multiple(() =>
         {
-            Assert.That(inOrderRev, Is.EqualTo(new[] { 15, 10, 5 }), "InOrderReverse failed");
-            Assert.That(preOrderRev, Is.EqualTo(new[] { 15, 5, 10 }), "PreOrderReverse failed");
-            Assert.That(postOrderRev, Is.EqualTo(new[] { 10, 15, 5 }), "PostOrderReverse failed");
+            Assert.That(inOrderRev, Is.EqualTo(inOrder.Reverse()), "InOrderReverse failed");
+            Assert.That(preOrderRev, Is.EqualTo(preOrder.Reverse()), "PreOrderReverse failed");
+            Assert.That(postOrderRev, Is.EqualTo(postOrder.Reverse()), "PostOrderReverse failed");
         });
     }
     
